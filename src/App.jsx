@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReportView from './report/ReportView';
 
 // --- INLINE SVG ICONS ---
 const IconShield = () => (
@@ -68,8 +69,8 @@ export default function App() {
   });
   const [friaForm, setFriaForm] = useState({
     appName: '',
-    stakeholders: ['Leerlingen', 'Docenten'],
-    identifiedRisks: ['Privacy van leerlinggegevens', 'Inbreuk op autonomie van de docent'],
+    stakeholders: ['Studenten', 'Docenten', 'Managers onderwijs', 'Instelling/Bestuur'],
+    identifiedRisks: ['Privacy van studentgegevens', 'Inbreuk op autonomie van de docent'],
     oversightMethod: 'Human-in-the-loop (HITL): Docent keurt alle AI-concepten goed.',
     mitigationMeasures: '1. Periodieke controle op bias\n2. Duidelijke communicatie\n3. Opt-out mogelijkheid.',
     schoolResponsible: 'Stichting Funderend Onderwijs - IT Bestuur'
@@ -102,22 +103,22 @@ export default function App() {
     }
     textField.remove();
   };
-  const isAISystem = 
-    wizardAnswers.isMachine === 'ja' && 
-    wizardAnswers.hasAutonomy === 'ja' && 
-    wizardAnswers.hasInference === 'ja' && 
+  const isAISystem =
+    wizardAnswers.isMachine === 'ja' &&
+    wizardAnswers.hasAutonomy === 'ja' &&
+    wizardAnswers.hasInference === 'ja' &&
     wizardAnswers.generatesOutput === 'ja';
-  const isForbidden = 
-    wizardAnswers.emotionRecognition === 'ja' || 
-    wizardAnswers.biometricCategorization === 'ja' || 
-    wizardAnswers.socialScoring === 'ja' || 
+  const isForbidden =
+    wizardAnswers.emotionRecognition === 'ja' ||
+    wizardAnswers.biometricCategorization === 'ja' ||
+    wizardAnswers.socialScoring === 'ja' ||
     wizardAnswers.subliminalManipulation === 'ja';
-  const fitsHighRiskCategory = 
-    wizardAnswers.admissionSystem === 'ja' || 
-    wizardAnswers.evaluationSystem === 'ja' || 
-    wizardAnswers.levelAdvancement === 'ja' || 
+  const fitsHighRiskCategory =
+    wizardAnswers.admissionSystem === 'ja' ||
+    wizardAnswers.evaluationSystem === 'ja' ||
+    wizardAnswers.levelAdvancement === 'ja' ||
     wizardAnswers.proctoringSystem === 'ja';
-  
+
   const isHighRisk = fitsHighRiskCategory && !wizardAnswers.isAdministrativeException;
   const applyCase = (caseType) => {
     if (caseType === 'homework_chatbot') {
@@ -210,15 +211,16 @@ export default function App() {
             </div>
             <div>
               <h1 className="text-xl md:text-2xl font-bold tracking-wide">AI Toetsingskader</h1>
-              <p className="text-xs text-slate-200">Gidsinstrument voor Funderend Onderwijs</p>
+              <p className="text-xs text-slate-200">Gidsinstrument voor vervolgonderwijs</p>
             </div>
           </div>
-          
+
           <nav className="flex space-x-1 bg-white/10 p-1 rounded-xl border border-white/10 text-sm">
             <button onClick={() => setActiveTab('wizard')} className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'wizard' ? 'bg-white text-[#2D5A87] shadow-sm' : 'hover:bg-white/5 text-slate-100'}`}>🔍 Toetsing</button>
             <button onClick={() => setActiveTab('fria')} className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'fria' ? 'bg-white text-[#2D5A87] shadow-sm' : 'hover:bg-white/5 text-slate-100'}`}>📋 FRIA</button>
             <button onClick={() => setActiveTab('cases')} className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'cases' ? 'bg-white text-[#2D5A87] shadow-sm' : 'hover:bg-white/5 text-slate-100'}`}>💡 Cases</button>
             <button onClick={() => setActiveTab('sources')} className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'sources' ? 'bg-white text-[#2D5A87] shadow-sm' : 'hover:bg-white/5 text-slate-100'}`}>📚 Bronnen</button>
+            <button onClick={() => setActiveTab('report')} className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'report' ? 'bg-white text-[#2D5A87] shadow-sm' : 'hover:bg-white/5 text-slate-100'}`}>📄 Rapport</button>
           </nav>
         </div>
       </header>
@@ -229,14 +231,15 @@ export default function App() {
               <div className="bg-slate-50 border-b border-slate-200 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <span className="text-sm font-semibold text-slate-600">Selecteer uw rol:</span>
                 <div className="flex space-x-2">
-                  <button onClick={() => { setRole('school'); showToast("Rol ingesteld: School"); }} className={`px-4 py-1.5 rounded-lg text-xs font-semibold border transition-all ${role === 'school' ? 'bg-emerald-50 border-emerald-500 text-emerald-700 shadow-sm' : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'}`}>🏫 School / Bestuur</button>
+                  <button onClick={() => { setRole('school'); showToast("Rol ingesteld: Instelling"); }} className={`px-4 py-1.5 rounded-lg text-xs font-semibold border transition-all ${role === 'school' ? 'bg-emerald-50 border-emerald-500 text-emerald-700 shadow-sm' : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'}`}>🏫 Instelling / Bestuur</button>
                   <button onClick={() => { setRole('leverancier'); showToast("Rol ingesteld: Leverancier"); }} className={`px-4 py-1.5 rounded-lg text-xs font-semibold border transition-all ${role === 'leverancier' ? 'bg-sky-50 border-sky-500 text-sky-700 shadow-sm' : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'}`}>🚀 Leverancier</button>
                 </div>
               </div>
               <div className="grid grid-cols-5 border-b border-slate-200 text-center text-xs font-bold bg-slate-50/50">
-                {[1, 2, 3, 4, 5].map((step) => (
-                  <button key={step} onClick={() => setCurrentStep(step)} className={`py-3 transition-colors border-b-2 ${currentStep === step ? 'border-[#2D5A87] text-[#2D5A87]' : 'border-transparent text-slate-400'}`}>
-                    Stap {step}
+                {[{ n: 1, l: 'Definitie' }, { n: 2, l: 'Verboden AI' }, { n: 3, l: 'Hoog Risico' }, { n: 4, l: 'Compliance' }, { n: 5, l: 'Ethiek' }].map((s) => (
+                  <button key={s.n} onClick={() => setCurrentStep(s.n)} className={`py-2 transition-colors border-b-2 ${currentStep === s.n ? 'border-[#2D5A87] text-[#2D5A87]' : 'border-transparent text-slate-400'}`}>
+                    <div>Stap {s.n}</div>
+                    <div className="text-[10px] font-normal opacity-70">{s.l}</div>
                   </button>
                 ))}
               </div>
@@ -251,29 +254,29 @@ export default function App() {
                       <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                         <label className="block text-sm font-bold text-slate-700 mb-2">1. Is het een machinegebaseerd systeem?</label>
                         <div className="flex space-x-4">
-                          <button onClick={() => setWizardAnswers({...wizardAnswers, isMachine: 'ja'})} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.isMachine === 'ja' ? 'bg-emerald-600 text-white' : 'bg-white'}`}>Ja</button>
-                          <button onClick={() => setWizardAnswers({...wizardAnswers, isMachine: 'nee'})} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.isMachine === 'nee' ? 'bg-rose-600 text-white' : 'bg-white'}`}>Nee</button>
+                          <button onClick={() => setWizardAnswers({ ...wizardAnswers, isMachine: 'ja' })} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.isMachine === 'ja' ? 'bg-emerald-600 text-white' : 'bg-white'}`}>Ja</button>
+                          <button onClick={() => setWizardAnswers({ ...wizardAnswers, isMachine: 'nee' })} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.isMachine === 'nee' ? 'bg-rose-600 text-white' : 'bg-white'}`}>Nee</button>
                         </div>
                       </div>
                       <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                         <label className="block text-sm font-bold text-slate-700 mb-2">2. Werkt het met een bepaalde mate van autonomie?</label>
                         <div className="flex space-x-4">
-                          <button onClick={() => setWizardAnswers({...wizardAnswers, hasAutonomy: 'ja'})} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.hasAutonomy === 'ja' ? 'bg-emerald-600 text-white' : 'bg-white'}`}>Ja</button>
-                          <button onClick={() => setWizardAnswers({...wizardAnswers, hasAutonomy: 'nee'})} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.hasAutonomy === 'nee' ? 'bg-rose-600 text-white' : 'bg-white'}`}>Nee</button>
+                          <button onClick={() => setWizardAnswers({ ...wizardAnswers, hasAutonomy: 'ja' })} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.hasAutonomy === 'ja' ? 'bg-emerald-600 text-white' : 'bg-white'}`}>Ja</button>
+                          <button onClick={() => setWizardAnswers({ ...wizardAnswers, hasAutonomy: 'nee' })} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.hasAutonomy === 'nee' ? 'bg-rose-600 text-white' : 'bg-white'}`}>Nee</button>
                         </div>
                       </div>
                       <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                         <label className="block text-sm font-bold text-slate-700 mb-2">3. Voert het systeem inferentie uit?</label>
                         <div className="flex space-x-4">
-                          <button onClick={() => setWizardAnswers({...wizardAnswers, hasInference: 'ja'})} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.hasInference === 'ja' ? 'bg-emerald-600 text-white' : 'bg-white'}`}>Ja</button>
-                          <button onClick={() => setWizardAnswers({...wizardAnswers, hasInference: 'nee'})} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.hasInference === 'nee' ? 'bg-rose-600 text-white' : 'bg-white'}`}>Nee</button>
+                          <button onClick={() => setWizardAnswers({ ...wizardAnswers, hasInference: 'ja' })} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.hasInference === 'ja' ? 'bg-emerald-600 text-white' : 'bg-white'}`}>Ja</button>
+                          <button onClick={() => setWizardAnswers({ ...wizardAnswers, hasInference: 'nee' })} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.hasInference === 'nee' ? 'bg-rose-600 text-white' : 'bg-white'}`}>Nee</button>
                         </div>
                       </div>
                       <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                         <label className="block text-sm font-bold text-slate-700 mb-2">4. Genereert het systeem beïnvloedende output?</label>
                         <div className="flex space-x-4">
-                          <button onClick={() => setWizardAnswers({...wizardAnswers, generatesOutput: 'ja'})} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.generatesOutput === 'ja' ? 'bg-emerald-600 text-white' : 'bg-white'}`}>Ja</button>
-                          <button onClick={() => setWizardAnswers({...wizardAnswers, generatesOutput: 'nee'})} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.generatesOutput === 'nee' ? 'bg-rose-600 text-white' : 'bg-white'}`}>Nee</button>
+                          <button onClick={() => setWizardAnswers({ ...wizardAnswers, generatesOutput: 'ja' })} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.generatesOutput === 'ja' ? 'bg-emerald-600 text-white' : 'bg-white'}`}>Ja</button>
+                          <button onClick={() => setWizardAnswers({ ...wizardAnswers, generatesOutput: 'nee' })} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.generatesOutput === 'nee' ? 'bg-rose-600 text-white' : 'bg-white'}`}>Nee</button>
                         </div>
                       </div>
                     </div>
@@ -293,8 +296,8 @@ export default function App() {
                       <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                         <label className="block text-sm font-bold text-slate-700 mb-2">1. Wordt er gebruikgemaakt van emotieherkenning?</label>
                         <div className="flex space-x-4">
-                          <button onClick={() => setWizardAnswers({...wizardAnswers, emotionRecognition: 'ja'})} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.emotionRecognition === 'ja' ? 'bg-rose-600 text-white' : 'bg-white'}`}>Ja</button>
-                          <button onClick={() => setWizardAnswers({...wizardAnswers, emotionRecognition: 'nee'})} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.emotionRecognition === 'nee' ? 'bg-emerald-600 text-white' : 'bg-white'}`}>Nee</button>
+                          <button onClick={() => setWizardAnswers({ ...wizardAnswers, emotionRecognition: 'ja' })} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.emotionRecognition === 'ja' ? 'bg-rose-600 text-white' : 'bg-white'}`}>Ja</button>
+                          <button onClick={() => setWizardAnswers({ ...wizardAnswers, emotionRecognition: 'nee' })} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.emotionRecognition === 'nee' ? 'bg-emerald-600 text-white' : 'bg-white'}`}>Nee</button>
                         </div>
                       </div>
                     </div>
@@ -314,7 +317,7 @@ export default function App() {
                     <div className="space-y-4">
                       <div className="p-5 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
                         <label className="flex items-center space-x-3 p-2 bg-white rounded border border-slate-200 cursor-pointer">
-                          <input type="checkbox" checked={wizardAnswers.evaluationSystem === 'ja'} onChange={(e) => setWizardAnswers({...wizardAnswers, evaluationSystem: e.target.checked ? 'ja' : 'nee'})} className="h-4 w-4" />
+                          <input type="checkbox" checked={wizardAnswers.evaluationSystem === 'ja'} onChange={(e) => setWizardAnswers({ ...wizardAnswers, evaluationSystem: e.target.checked ? 'ja' : 'nee' })} className="h-4 w-4" />
                           <span className="text-sm font-medium">Evaluatie van leerresultaten</span>
                         </label>
                       </div>
@@ -350,8 +353,8 @@ export default function App() {
                       <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                         <label className="block text-sm font-bold text-slate-700 mb-2">Is er menselijk toezicht?</label>
                         <div className="flex space-x-4">
-                          <button onClick={() => setWizardAnswers({...wizardAnswers, humanOversight: 'ja'})} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.humanOversight === 'ja' ? 'bg-emerald-600 text-white' : 'bg-white'}`}>Ja</button>
-                          <button onClick={() => setWizardAnswers({...wizardAnswers, humanOversight: 'nee'})} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.humanOversight === 'nee' ? 'bg-rose-600 text-white' : 'bg-white'}`}>Nee</button>
+                          <button onClick={() => setWizardAnswers({ ...wizardAnswers, humanOversight: 'ja' })} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.humanOversight === 'ja' ? 'bg-emerald-600 text-white' : 'bg-white'}`}>Ja</button>
+                          <button onClick={() => setWizardAnswers({ ...wizardAnswers, humanOversight: 'nee' })} className={`px-6 py-2 rounded-lg text-sm font-semibold border ${wizardAnswers.humanOversight === 'nee' ? 'bg-rose-600 text-white' : 'bg-white'}`}>Nee</button>
                         </div>
                       </div>
                     </div>
@@ -381,10 +384,83 @@ export default function App() {
                   </div>
                 </div>
               </div>
-              <div className="bg-[#2D5A87] text-white p-6 rounded-2xl shadow-sm space-y-4">
-                <h3 className="font-bold text-sm">Toetsingsrapport</h3>
-                <button onClick={() => copyToClipboard(`AI Systeem: ${isAISystem ? 'JA' : 'NEE'}\nHoog Risico: ${isHighRisk ? 'JA' : 'NEE'}`)} className="w-full bg-white text-[#2D5A87] py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2">
-                  <IconCopy /> <span>Kopieer Status</span>
+              <div className="bg-[#2D5A87] text-white p-5 rounded-2xl shadow-sm space-y-3">
+                <h3 className="font-bold text-sm flex items-center gap-2"><IconFileText /> Toetsingsrapport</h3>
+
+                <div className="bg-white/10 rounded-xl p-3 space-y-2 text-xs">
+                  <div className="flex justify-between items-center">
+                    <span>AI Act classificatie</span>
+                    <span className={`font-bold px-2 py-0.5 rounded text-[10px] ${isForbidden ? 'bg-red-400 text-white' : isHighRisk ? 'bg-amber-400 text-slate-900' : isAISystem ? 'bg-emerald-400 text-slate-900' : 'bg-slate-400 text-white'}`}>
+                      {isForbidden ? 'Verboden' : isHighRisk ? 'Hoog risico' : isAISystem ? 'Beperkt/minimaal' : 'Geen AI'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Rechtsgrond</span>
+                    <span className="font-bold">{isAISystem ? 'Art. 5-6 AI Act' : 'N.v.t.'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>SIVON richtlijn</span>
+                    <span className="font-bold">{isHighRisk ? '2026-003' : '2026-001'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>AVG impact</span>
+                    <span className={`font-bold ${isHighRisk ? 'text-amber-300' : 'text-emerald-300'}`}>{isHighRisk ? 'DPIA vereist' : 'Beperkt'}</span>
+                  </div>
+                </div>
+
+                <div className="text-[11px] space-y-1 bg-white/5 rounded-xl p-3">
+                  <p className="font-semibold">📋 Aanbevolen acties</p>
+                  <ul className="list-disc list-inside space-y-0.5 text-white/80">
+                    {isForbidden && <li className="text-red-300 font-semibold">⚠ Verboden praktijk — onmiddellijk stoppen (AI Act Art. 5)</li>}
+                    {isHighRisk && <li>FRIA opstellen (AI Act Art. 9 + SIVON 2026-003)</li>}
+                    {isHighRisk && <li>DPIA uitvoeren o.g.v. AVG Art. 35</li>}
+                    {isAISystem && <li>Transparantieplicht: leerlingen informeren (AI Act Art. 50)</li>}
+                    {wizardAnswers.humanOversight !== 'ja' && isAISystem && <li className="text-amber-300">Menselijk toezicht implementeren (HITL/HOTL)</li>}
+                    {wizardAnswers.biasTested !== 'ja' && isHighRisk && <li className="text-amber-300">Bias-test uitvoeren voor ingebruikname</li>}
+                    {role === 'leverancier' && isHighRisk && <li>CE-markering + conformiteitsbeoordeling (AI Act Art. 16-17)</li>}
+                    {role === 'school' && <li>Ouders/studenten raadplegen (medezeggenschap)</li>}
+                    {!isForbidden && !isHighRisk && !isAISystem && <li>Geen bijzondere verplichtingen — blijf monitoren</li>}
+                  </ul>
+                </div>
+
+                <div className="text-[11px] space-y-1 bg-white/5 rounded-xl p-3">
+                  <p className="font-semibold">🔗 Regelgevingskaders</p>
+                  <ul className="space-y-0.5 text-white/70">
+                    <li>AI Act (Verordening 2024/1689) — Art. 3 (definities), Art. 5 (verboden), Art. 6-7 (hoog risico), Art. 50 (transparantie)</li>
+                    <li>AVG (Verordening 2016/679) — Art. 5 (beginselen), Art. 35 (DPIA), Art. 22 (geautomatiseerde besluitvorming)</li>
+                    <li>SIVON Kaders 2026 — Toetsingskader AI in het Funderend Onderwijs</li>
+                    <li>AP Richtsnoeren — Algoritmes &amp; onderwijs (2025)</li>
+                    <li>Kennisnet Ethiekkompas — Waardengedreven inzet van AI</li>
+                    <li>IMRA / IMDA — Informatiebeveiliging en privacy</li>
+                  </ul>
+                </div>
+
+                <button onClick={() => copyToClipboard(
+                  `TOETSINGSRAPPORT AI TOETSIINGSKADER\n` +
+                  `================================\n\n` +
+                  `Classificatie: ${isForbidden ? 'Verboden' : isHighRisk ? 'Hoog risico' : isAISystem ? 'Beperkt/minimaal' : 'Geen AI'}\n` +
+                  `AI-systeem: ${isAISystem ? 'JA' : 'NEE'}\n` +
+                  `Verboden praktijk: ${isForbidden ? 'JA' : 'NEE'}\n` +
+                  `Hoog risico: ${isHighRisk ? 'JA' : 'NEE'}\n` +
+                  `Rol: ${role === 'school' ? 'Instelling/Bestuur' : role === 'leverancier' ? 'Leverancier' : 'Niet geselecteerd'}\n\n` +
+                  `Regelgeving:\n` +
+                  `- AI Act Art. 3: AI-definitie\n` +
+                  `- AI Act Art. 5: Verboden praktijken\n` +
+                  `- AI Act Art. 6: Hoog-risico criteria\n` +
+                  `- AI Act Art. 9: Risicobeheer\n` +
+                  `- AI Act Art. 50: Transparantieplicht\n` +
+                  `- AVG Art. 5: Beginselen verwerking\n` +
+                  `- AVG Art. 22: Geautomatiseerde besluiten\n` +
+                  `- AVG Art. 35: DPIA\n` +
+                  `- SIVON 2026: Toetsingskader\n\n` +
+                  `Aanbevolen acties:\n` +
+                  `${isForbidden ? '- STOPPEN (verboden praktijk)\n' : ''}` +
+                  `${isHighRisk ? '- FRIA opstellen (AI Act Art. 9)\n- DPIA uitvoeren (AVG Art. 35)\n- Bias-test uitvoeren\n' : ''}` +
+                  `${isAISystem ? '- Transparantie richting leerlingen (AI Act Art. 50)\n' : ''}` +
+                  `${role === 'leverancier' && isHighRisk ? '- CE-markering + conformiteitsbeoordeling\n' : ''}` +
+                  `- Raadpleeg SIVON kaders voor verdere implementatie\n`
+                )} className="w-full bg-white text-[#2D5A87] py-2.5 rounded-xl text-xs font-bold transition-all hover:bg-slate-100 flex items-center justify-center space-x-2">
+                  <IconCopy /> <span>Kopieer Rapport</span>
                 </button>
               </div>
             </div>
@@ -396,7 +472,7 @@ export default function App() {
             <div className="space-y-3">
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Naam AI-Toepassing</label>
-                <input type="text" className="w-full px-3 py-2 border rounded-xl text-sm" value={friaForm.appName} onChange={(e) => setFriaForm({...friaForm, appName: e.target.value})} placeholder="Wiskunde chatbot" />
+                <input type="text" className="w-full px-3 py-2 border rounded-xl text-sm" value={friaForm.appName} onChange={(e) => setFriaForm({ ...friaForm, appName: e.target.value })} placeholder="Wiskunde chatbot" />
               </div>
               <button onClick={() => copyToClipboard(`FRIA: ${friaForm.appName}`)} className="bg-[#2D5A87] text-white px-4 py-2 rounded-xl text-xs font-bold">Kopieer FRIA</button>
             </div>
@@ -433,9 +509,12 @@ export default function App() {
             <p className="text-sm text-slate-600">Dit platform integreert de richtlijnen van SIVON (2026), AP (2025), Kennisnet en IMDA.</p>
           </div>
         )}
+        {activeTab === 'report' && (
+          <ReportView wizardAnswers={wizardAnswers} role={role} />
+        )}
       </main>
       <footer className="bg-slate-900 text-slate-400 py-4 text-center text-xs mt-12">
-        <p>© 2026 AI Toetsingskader Funderend Onderwijs.</p>
+        <p>© 2026 AI Toetsingskader Beroepsnderwijs.</p>
       </footer>
     </div>
   );
